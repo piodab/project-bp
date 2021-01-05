@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TechniqueController;
+use App\Http\Controllers\TacticController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('tactics/enterprise', [TacticController::class, 'index'])->name('tactics.enterprise');
+Route::get('tactics/{id}', [TacticController::class, 'show'])->name('tactics.show');
+Route::get('techniques/{id}/{subId}', [TechniqueController::class, 'show'])->name('techniques.show');
+Route::get('techniques/{id}', [TechniqueController::class, 'show'])->name('techniques.main.show');
+
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('tactics.enterprise');
 });

@@ -32,6 +32,6 @@ Route::prefix('techniques')->name('techniques.')->group(
 Route::get(
     '/',
     function () {
-        return redirect()->route('tactics.enterprise');
+        return redirect()->route('tactics.index');
     }
 );

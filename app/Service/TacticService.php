@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Redis;
 class TacticService
 {
     public const EX_TIME = 86400;
+    public const KEY_TACTICS = 'tactics:enterprise';
 
     /**
      * Returns a list of tactics from api or redis
@@ -21,13 +23,13 @@ class TacticService
      */
     public function getTactics()
     {
-        if (! Redis::get('tactics:enterprise')) {
-            $response = Http::get(config('app.url').'/api/v1/tactics');
+        if (!Cache::has(self::KEY_TACTICS)) {
+            $response = Http::get(url('/api/v1/tactics'));
             if ($response->ok()) {
-                Redis::set('tactics:enterprise', $response->body(), 'EX', self::EX_TIME);
+                Cache::put(self::KEY_TACTICS, $response->body(), self::EX_TIME);
             }
         }
 
-        return json_decode(Redis::get('tactics:enterprise'))->data;
+        return json_decode(Cache::get(self::KEY_TACTICS))->data;
     }
 }

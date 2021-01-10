@@ -25,7 +25,7 @@ class Techniques implements Content
     }
 
     /**
-     * Updatee content
+     * Update content
      */
     public function update(): void
     {

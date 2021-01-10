@@ -7,6 +7,7 @@ use App\Support\Mitre\Content\Tactics;
 use App\Support\Mitre\Content\Techniques;
 use App\Support\Mitre\UpdateContent;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Class UpdateMitreData
@@ -45,6 +46,8 @@ class UpdateMitreData extends Command
      */
     public function handle()
     {
+        Cache::flush();
+
         $updateContent = new UpdateContent(new MitreService());
         $updateContent
             ->add(new Tactics())

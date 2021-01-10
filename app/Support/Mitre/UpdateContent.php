@@ -16,7 +16,6 @@ class UpdateContent
 {
     private $contents;
     private $mitreService;
-    private $tacticList = [];
 
     /**
      * UpdateContent constructor.

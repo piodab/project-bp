@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Redis;
 
 /**
  * Class TechniquesService
@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Redis;
 class TechniquesService
 {
     public const EX_TIME = 86400;
+    //Redis keys
     public const KEY_TECHNIQUES = 'techniques:enterprise';
+    public const KEY_TECHNIQUES_SEARCH = 'techniques:enterprise#search:';
+    public const KEY_SHORT_NAME = '#short.name:';
 
     /**
      * Returns a list of techniques from api or redis
@@ -22,14 +25,14 @@ class TechniquesService
      */
     public function getTechniques()
     {
-        if (!Redis::get(self::KEY_TECHNIQUES)) {
+        if (!Cache::has(self::KEY_TECHNIQUES)) {
             $response = Http::get(config('app.url') . '/api/v1/techniques');
             if ($response->ok()) {
-                Redis::set(self::KEY_TECHNIQUES, $response->body(), 'EX', self::EX_TIME);
+                Cache::put(self::KEY_TECHNIQUES, $response->body(), self::EX_TIME);
             }
         }
 
-        return json_decode(Redis::get('techniques:enterprise'))->data;
+        return json_decode(Cache::get(self::KEY_TECHNIQUES))->data;
     }
 
     /**
@@ -40,25 +43,24 @@ class TechniquesService
      */
     public function findTechniques($search = null, $shortName = null)
     {
-        if (!Redis::get('techniques:enterprise#search:' . $search . '#short.name:' . $shortName)) {
+        if (!Cache::has(self::KEY_TECHNIQUES_SEARCH . $search . self::KEY_SHORT_NAME . $shortName)) {
             $response = Http::get(
-                config('app.url') . '/api/v1/techniques',
+                url('/api/v1/techniques'),
                 [
                     'search' => $search,
                     'pname' => $shortName,
                 ]
             );
             if ($response->ok()) {
-                Redis::set(
-                    'techniques:enterprise#search:' . $search . '#short.name:' . $shortName,
+                Cache::put(
+                    self::KEY_TECHNIQUES_SEARCH . $search . self::KEY_SHORT_NAME . $shortName,
                     $response->body(),
-                    'EX',
                     self::EX_TIME
                 );
             }
         }
 
-        return json_decode(Redis::get('techniques:enterprise#search:' . $search . '#short.name:' . $shortName))->data;
+        return json_decode(Cache::get(self::KEY_TECHNIQUES_SEARCH . $search . self::KEY_SHORT_NAME . $shortName))->data;
     }
 
     /**
@@ -71,14 +73,14 @@ class TechniquesService
     {
         $subId ??= '000';
 
-        if (!Redis::get('technique:' . $id . ':' . $subId)) {
-            $response = Http::get(config('app.url') . '/api/v1/techniques/' . $id . '/' . $subId);
+        if (!Cache::has('technique:' . $id . ':' . $subId)) {
+            $response = Http::get(url( '/api/v1/techniques/' . $id . '/' . $subId));
             if ($response->ok()) {
-                Redis::set('technique:' . $id . ':' . $subId, $response->body(), 'EX', self::EX_TIME);
+                Cache::put('technique:' . $id . ':' . $subId, $response->body(), self::EX_TIME);
             }
         }
 
-        return json_decode(Redis::get('technique:' . $id . ':' . $subId))->data;
+        return json_decode(Cache::get('technique:' . $id . ':' . $subId))->data;
     }
 
 }

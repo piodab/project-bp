@@ -20,6 +20,10 @@ interface Content
      */
     public function prepareData();
 
+    /**
+     * @param $content
+     * @return mixed
+     */
     public function setContent($content);
 
 }

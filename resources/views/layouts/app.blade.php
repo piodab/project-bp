@@ -62,7 +62,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="nav navbar-nav ml-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="{{ route('tactics.enterprise') }} ">Home</a>
+                            <a class="nav-link" href="{{ route('tactics.index') }} ">Home</a>
                         </li>
                         </li>
                     </ul>

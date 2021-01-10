@@ -15,11 +15,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('tactics/enterprise', [TacticController::class, 'index'])->name('tactics.enterprise');
-Route::get('tactics/{id}', [TacticController::class, 'show'])->name('tactics.show');
-Route::get('techniques/{id}/{subId}', [TechniqueController::class, 'show'])->name('techniques.show');
-Route::get('techniques/{id}', [TechniqueController::class, 'show'])->name('techniques.main.show');
+Route::prefix('tactics')->name('tactics.')->group(
+    function () {
+        Route::get('/enterprise', [TacticController::class, 'index'])->name('index');
+        Route::get('/{id}', [TacticController::class, 'show'])->name('show');
+    }
+);
 
-Route::get('/', function () {
-    return redirect()->route('tactics.enterprise');
-});
+Route::prefix('techniques')->name('techniques.')->group(
+    function () {
+        Route::get('/{id}/{subId}', [TechniqueController::class, 'show'])->name('show');
+        Route::get('/{id}', [TechniqueController::class, 'show'])->name('main.show');
+    }
+);
+
+Route::get(
+    '/',
+    function () {
+        return redirect()->route('tactics.enterprise');
+    }
+);

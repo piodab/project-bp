@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\TacticController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,12 +17,27 @@ use App\Http\Controllers\Api\TacticController;
 |
 */
 
-;
+Route::prefix('v1')->name('api.v1.')->group(
+    function () {
+        Route::prefix('tactics')->name('tactics.')->group(
+            function () {
+                Route::get('/', [TacticController::class, 'index'])->name('index');
+            }
+        );
 
-Route::get('v1/tactics', [TacticController::class, 'index']);
-Route::get('v1/techniques', [TechniqueController::class, 'index']);
-Route::get('v1/techniques/{id}/{subId}', [TechniqueController::class, 'show']);
+        Route::prefix('techniques')->name('techniques.')->group(
+            function () {
+                Route::get('/', [TechniqueController::class, 'index'])->name('index');
+                Route::get('/{id}/{subId}', [TechniqueController::class, 'show'])->name('show');
+            }
+        );
+    }
+);
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::middleware('auth:api')->get(
+    '/user',
+    function (Request $request) {
+        return $request->user();
+    }
+);

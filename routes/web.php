@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+//test
 Route::prefix('tactics')->name('tactics.')->group(
     function () {
         Route::get('/enterprise', [TacticController::class, 'index'])->name('index');
